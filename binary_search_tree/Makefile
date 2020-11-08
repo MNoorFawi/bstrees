@@ -1,15 +1,13 @@
-all: buildlib buildexe
+all: build_bst buildexe clean
 
-sc = ./source_code/
-
-buildlib:
-	$(shell mkdir -p $(sc)lib)
-	gcc -fPIC -c $(sc)bstree.c -o $(sc)bstree.o
-	gcc -shared $(sc)bstree.o -o $(sc)lib/libbstree.so
-	rm $(sc)*.o
-
+build_bst:
+	$(shell mkdir -p ./libs)
+	gcc -fPIC -c bstree.c -o bstree.o
+	gcc -shared bstree.o -o ./libs/libbstree.so
+		
 buildexe:
-	gcc -c prog.c
-	gcc prog.o -L$(sc)lib -lbstree -o prog
+	gcc prog.c -L./libs -lbstree -o prog
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./libs
+	
+clean:
 	rm *.o
-	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$(sc)lib

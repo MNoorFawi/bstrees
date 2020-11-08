@@ -1,78 +1,51 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "./source_code/bstree.h"
+#include "bstree.h"
 
-tn * read_data() {
-  int indx;
-  char player[100];
-  float goal_ratio;
+int main() {
+  puts("\nstarting with an empty tree");
   tn * root = NULL;
-  FILE * f = fopen("example_data.csv", "r");
-
-  puts("\nreading the data from file and inserting it into tree:\n");
-  //scanf("%d,%[^,],%f", & indx, name, & ratio) == 3; // here we will redirect stdin to the file
-  while (fscanf(f, "%d,%[^,],%f", & indx, player, & goal_ratio) == 3) { // read string until a coma
-    printf("%d,%s,%.2f\n", indx, player, goal_ratio);
-    insert( & root, indx, player, goal_ratio);
+  Type type = INT;
+  int i, count = 0;
+  Tuple t;
+  int arr[7] = {
+    13,
+    11,
+    19,
+    91,
+    22,
+    12,
+    94
+  };
+  for (i = 0; i < 7; ++i) {
+    insert( & root, arr[i], type, & count);
   }
-  fclose(f);
-
-  puts("\nThe created tree is:");
-  inorder(root);
-
-  printf("\n\nThe number of nodes in tree are: %d\n", count(root));
-  return root;
-}
-
-void main() {
-  int n, choice, t;
-  tn * root, * temp_tree = NULL;
-
-  root = read_data();
-
-  do {
-    printf("\n1.Search the tree for a Node\n"
-      "2.Remove a node from the tree\n"
-      "3.print the tree (inorder)\n"
-      "4.Count of nodes in the tree\n"
-      "\n Please enter your choice: ");
-
-    scanf("%d", & choice);
-    switch (choice) {
-    case 1:
-      puts("\nEnter node ID:");
-      scanf("%d", & t);
-      temp_tree = search(root, t);
-      if (temp_tree != NULL) {
-        puts("\nthe indx value is present in the tree");
-        printf("Node (number of goals) is: %d\nName is: %s\nGoal Ratio is: %4f\n", t, temp_tree -> name, temp_tree -> ratio);
-      } else
-        puts("the indx value is not present in the tree");
-      break;
-
-    case 2:
-      puts("\nEnter ID of node to be deleted:");
-      scanf("%d", & t);
-      root = delete(root, t);
-      printf("\nNode %d has been removed from the tree\n", t);
-      break;
-
-    case 3:
-      inorder(root);
-      puts("");
-      break;
-
-    case 4:
-      printf("\nThe number of nodes in tree are: %d\n", count(root));
-      break;
-
-    default:
-      puts("Invalid Input\n");
-    }
-
-    printf("\nDo you want to continue (press 1 for yes or 0 to exit): ");
-    scanf("%d", & n);
-
-  } while (n == 1);
-
+  puts("\ntree now is not empty:");
+  inorder(root, type);
+  puts("");
+  puts("try now to search for and delete some values: (0 means False while 1 is True)");
+  printf("search for value 13 --> %d \n", !(search_tree(root, int_in(13), type) == NULL));
+  printf("search for value 11 --> %d \n", !(search_tree(root, int_in(11), type) == NULL));
+  printf("tree size --> %d\n", count);
+  printf("remove value 13 -->\n");
+  delete_node( & root, int_in(13), type, & count);
+  printf("search again for value 13 --> %d \n", !(search_tree(root, int_in(13), type) == NULL));
+  printf("try again to remove value 13 -->\n");
+  delete_node( & root, int_in(13), type, & count);
+  puts("\nprint the table after the deletion");
+  inorder(root, INT);
+  puts("insert value 4");
+  insert( & root, 4, type, & count);
+  inorder(root, type);
+  puts("\nretrieve all elements into an array");
+  char ** arrx = (char ** ) malloc(sizeof(char * ) * STRLEN);
+  int len = 0;
+  tree_to_array(root, type, arrx, & len);
+  for (i = 0; i < len; ++i)
+    printf("%s ", arrx[i]);
+  puts("\n");
+  printf("remove value 91 -->\n");
+  delete_node( & root, int_in(91), type, & count);
+  puts("\ntable is now looking like:");
+  inorder(root, type);
 }
